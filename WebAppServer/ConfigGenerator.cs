@@ -62,7 +62,7 @@ namespace WebAppServer
             var clrConfigPath = Path.Combine(configPath, "aspnet.config"); // TODO: might need to just -> runtime version aspnet.config file
 
             File.WriteAllText(clrConfigPath, Resources.aspnet);
-            File.WriteAllText(settings.AppConfigPath, runtimeVersion == Constants.RuntimeVersion.VersionFourDotZero ? Resources.applicationhost : Resources.v2_0AppHost);
+            File.WriteAllText(settings.AppConfigPath, runtimeVersion == Constants.RuntimeVersion.VersionTwoDotZero ? Resources.v2_0AppHost : Resources.applicationhost );
 
             // TODO: Randomize AES Session Keys??
             // TODO: Generage new machine key - use BuildMachineKeyElement()
@@ -76,6 +76,12 @@ namespace WebAppServer
             appHostConfig.AddToElement(Constants.ConfigXPath.AppPools,
                 BuildApplicationPool(appPoolName, runtimeVersion, pipelineMode, clrConfigPath, userName, password));
 
+            // add AspNetCoreModule
+            if (runtimeVersion == Constants.RuntimeVersion.VersionAspNetCore)
+            {
+                appHostConfig.AddToElement(Constants.ConfigXPath.GlobalModules, BuildAddGlobalModule("AspNetCoreModule", @"%SystemRoot%\system32\inetsrv\aspnetcore.dll"));
+            }
+
             // disable http logging
             appHostConfig.SetValue(Constants.ConfigXPath.WebServer + "/httpLogging", "dontLog", true);
 
@@ -87,6 +93,14 @@ namespace WebAppServer
 
             appHostConfig.Save(settings.AppConfigPath);
             return settings;
+        }
+
+        protected virtual XElement BuildAddGlobalModule(string name, string image)
+        {
+            var module = new XElement("add");
+            module.Add(new XAttribute("name", name));
+            module.Add(new XAttribute("image", image));
+            return module;
         }
 
         private void EnsureDirectory(string directory)

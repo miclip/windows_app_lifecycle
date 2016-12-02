@@ -14,6 +14,7 @@ namespace WebAppServer
             public static string SiteDefaults = Sites + "/siteDefaults";
 
             public static string WebServer = "/configuration/system.webServer";
+            public static string GlobalModules = WebServer + "/globalModules";
         }
 
         public class FrameworkPaths
@@ -29,6 +30,7 @@ namespace WebAppServer
         {
             public static string VersionFourDotZero = "v4.0";
             public static string VersionTwoDotZero = "v2.0";
+            public static string VersionAspNetCore = "";
         }
 
         public class PipelineMode

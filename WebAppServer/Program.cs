@@ -63,14 +63,17 @@ namespace WebAppServer
 
                 log.Info("Port:{0}", options.Port);
                 log.Info("Webroot:{0}", options.WebRoot);
-
+                log.Info("FrameworkWebConfig:{0}", options.FrameworkWebConfig);
+                log.Info("RuntimeVersion:{0}", options.RuntimeVersion);
+                log.Info("IsAspNetCore:{0}", options.IsAspNetCore);
+                
                 var configGenerator = new ConfigGenerator(options.WebRoot);
-                var webConfig = WebConfig.Create(Environment.ExpandEnvironmentVariables(Constants.FrameworkPaths.FourDotZeroWebConfig),
-                    AppDomain.CurrentDomain.BaseDirectory);
+                var webConfig = WebConfig.Create(Environment.ExpandEnvironmentVariables(options.FrameworkWebConfig),
+                    options.WebRoot);
                 var settings = configGenerator.Create(
                     options.Port,
                     webConfig,
-                    Constants.RuntimeVersion.VersionFourDotZero,
+                    options.RuntimeVersion,
                     Constants.PipelineMode.Integrated, 
                     null, 
                     null);
